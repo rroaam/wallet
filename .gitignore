@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Electron
+out/
+
+# Node (MCP server)
+mcp-server/node_modules/
+mcp-server/*.js
+mcp-server/*.d.ts
+!mcp-server/tsconfig.json
+!mcp-server/package.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+.env.local

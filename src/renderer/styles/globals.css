@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-wallet-bg: #090A11;
+  --color-wallet-surface: #13141E;
+  --color-wallet-panel: #1A1B27;
+  --color-wallet-border: #252636;
+  --color-wallet-purple: #7B61FF;
+  --color-wallet-cyan: #00D9E8;
+  --color-wallet-green: #10B981;
+  --color-wallet-amber: #F59E0B;
+  --color-wallet-white: #EEEEF2;
+  --color-wallet-muted: #6B7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  background: transparent;
+  color: var(--color-wallet-white);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-wallet-border);
+  border-radius: 2px;
+}
+
+/* Glass card base */
+.glass {
+  background: rgba(19, 20, 30, 0.8);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.glass-active {
+  border-image: linear-gradient(to right, var(--color-wallet-purple), var(--color-wallet-cyan)) 1;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(to right, var(--color-wallet-purple), var(--color-wallet-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient button */
+.gradient-btn {
+  background: linear-gradient(to right, var(--color-wallet-purple), var(--color-wallet-cyan));
+  border: none;
+  border-radius: 9999px;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.gradient-btn:hover {
+  opacity: 0.9;
+}
+
+.gradient-btn:active {
+  transform: scale(0.98);
+}
+
+/* Monospaced text */
+.mono {
+  font-family: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+}

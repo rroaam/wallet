@@ -1,0 +1,17 @@
+{
+  "name": "wallet-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Wallet — personal AI context layer",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0"
+  }
+}

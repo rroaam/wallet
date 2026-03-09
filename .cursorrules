@@ -1,0 +1,33 @@
+You are building 'Wallet' — a macOS menu bar app using Electron + React + Tailwind.
+
+PRODUCT CONTEXT:
+Wallet stores 8 personal context cards (Identity, Voice, Expertise, Current Work,
+Audience, Aesthetic, Narrative, Goals) and injects them into AI tools automatically.
+It is NOT a finance app, credentials wallet, or general notes app.
+
+ARCHITECTURE:
+- Electron main process: menubar package, electron-store for persistence
+- React renderer: Vite + Tailwind v4
+- Context detection: osascript polling (no native deps)
+- IPC via contextBridge preload
+- MCP server: Node.js sidecar for Claude Desktop
+
+DESIGN SYSTEM (always use these, never raw hex values):
+- Colors: wallet-bg, wallet-surface, wallet-panel, wallet-purple, wallet-cyan, etc.
+- Glass treatment: glass class with backdrop-filter
+- Gradient: wallet-purple → wallet-cyan for CTAs and active states
+- Dark mode only — no light mode support
+- Mono text: .mono class for metadata, tags, timestamps
+
+CODE STYLE:
+- TypeScript strict
+- Functional React components
+- No class components
+- Shared types in src/shared/
+- Main process types duplicated for CommonJS compat
+
+NEVER:
+- Use light mode styles
+- Hard-code hex colors (use Tailwind tokens)
+- Add native dependencies that need compilation
+- Use require() in renderer (ESM only)
