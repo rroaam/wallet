@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { CardRow } from "./CardRow";
 import type { WalletCard } from "@shared/types";
 
@@ -9,33 +10,101 @@ interface CardTrayProps {
 }
 
 export function CardTray({ cards, contextActive, onSelectCard, onOpenSettings }: CardTrayProps) {
+  const [searching, setSearching] = useState(false);
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filtered = query.trim()
+    ? cards.filter((c) => {
+        const q = query.toLowerCase();
+        return (
+          c.name.toLowerCase().includes(q) ||
+          c.content.toLowerCase().includes(q) ||
+          c.summary.toLowerCase().includes(q)
+        );
+      })
+    : cards;
+
+  useEffect(() => {
+    if (searching) inputRef.current?.focus();
+  }, [searching]);
+
+  // Keyboard: Cmd+F to search, Escape to close search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "f") {
+        e.preventDefault();
+        setSearching(true);
+      } else if (e.key === "Escape" && searching) {
+        setSearching(false);
+        setQuery("");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [searching]);
+
   return (
     <div className="flex flex-col h-full">
       {/* Header — 44px */}
       <div className="flex items-center justify-between px-3.5 h-11 shrink-0">
-        <span className="mono text-[11px] text-wallet-cyan tracking-wider">
-          WALLET
-        </span>
-        <div className="flex items-center gap-2">
-          <button className="text-wallet-muted hover:text-wallet-white transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {searching ? (
+          <div className="flex items-center gap-2 flex-1">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-wallet-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
-          </button>
-        </div>
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search cards..."
+              className="flex-1 bg-transparent text-[13px] text-wallet-white outline-none placeholder:text-wallet-muted/40"
+            />
+            <button
+              onClick={() => { setSearching(false); setQuery(""); }}
+              className="text-wallet-muted hover:text-wallet-white transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <>
+            <span className="mono text-[11px] text-wallet-cyan tracking-wider">
+              WALLET
+            </span>
+            <button
+              onClick={() => setSearching(true)}
+              className="text-wallet-muted hover:text-wallet-white transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
 
       {/* Card list */}
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-px">
-          {cards.map((card) => (
-            <CardRow
-              key={card.id}
-              card={card}
-              onClick={() => onSelectCard(card)}
-            />
-          ))}
+          {filtered.length > 0 ? (
+            filtered.map((card) => (
+              <CardRow
+                key={card.id}
+                card={card}
+                onClick={() => onSelectCard(card)}
+              />
+            ))
+          ) : (
+            <div className="flex items-center justify-center py-8">
+              <span className="text-[12px] text-wallet-muted">No matching cards</span>
+            </div>
+          )}
         </div>
       </div>
 

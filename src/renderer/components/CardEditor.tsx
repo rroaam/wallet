@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CardIcon } from "./CardIcon";
-import { CARD_META, MAX_CONTENT_LENGTH } from "@shared/constants";
+import { CARD_META, CARD_EXAMPLES, MAX_CONTENT_LENGTH } from "@shared/constants";
 import type { WalletCard } from "@shared/types";
 
 interface CardEditorProps {
@@ -21,6 +21,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
     onSave({
       ...card,
       content: draft.slice(0, MAX_CONTENT_LENGTH),
+      summary: draft.slice(0, 60).replace(/\n/g, " "),
       updatedAt: new Date().toISOString(),
     });
   };
@@ -31,6 +32,29 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
     }
     onClose();
   };
+
+  const handleSuggest = () => {
+    const example = CARD_EXAMPLES[card.id];
+    if (draft.trim().length === 0) {
+      setDraft(example);
+    } else {
+      setDraft(draft + "\n\n" + example);
+    }
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      } else if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
 
   return (
     <div className="flex flex-col h-full p-5">
@@ -67,11 +91,16 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
 
       {/* AI suggest */}
       <div className="mt-3">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-wallet-purple bg-wallet-purple/10 rounded-full hover:bg-wallet-purple/20 transition-colors">
+        <button
+          onClick={handleSuggest}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-wallet-purple bg-wallet-purple/10 rounded-full hover:bg-wallet-purple/20 transition-colors"
+        >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z" />
           </svg>
-          <span className="mono text-[11px]">Suggest →</span>
+          <span className="mono text-[11px]">
+            {isEmpty ? "Use example" : "Add example"} →
+          </span>
         </button>
       </div>
 

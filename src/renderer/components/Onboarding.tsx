@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CardIcon } from "./CardIcon";
-import { CARD_META, MAX_CONTENT_LENGTH } from "@shared/constants";
+import { CARD_META, CARD_EXAMPLES, MAX_CONTENT_LENGTH } from "@shared/constants";
 import type { WalletCard } from "@shared/types";
 
 interface OnboardingProps {
@@ -26,7 +26,7 @@ export function Onboarding({ identityCard, onComplete }: OnboardingProps) {
   // Screen 1: Value prop
   if (step === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full px-6 text-center">
+      <div className="flex flex-col items-center justify-center h-full px-6 text-center view-fade">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-wallet-purple to-wallet-cyan flex items-center justify-center mb-6">
           <span className="text-[22px] font-bold text-white">W</span>
         </div>
@@ -57,7 +57,7 @@ export function Onboarding({ identityCard, onComplete }: OnboardingProps) {
   // Screen 2: Identity card editor
   if (step === 1) {
     return (
-      <div className="flex flex-col h-full px-5 pt-6 pb-4">
+      <div className="flex flex-col h-full px-5 pt-6 pb-4 view-forward">
         <div className="flex items-center gap-2 mb-1">
           <CardIcon name={meta.icon} className="text-wallet-purple" size={18} />
           <span className="text-[15px] font-semibold text-wallet-white">
@@ -73,14 +73,27 @@ export function Onboarding({ identityCard, onComplete }: OnboardingProps) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           className="flex-1 w-full p-3 text-[14px] text-wallet-white bg-wallet-surface border border-wallet-border rounded-lg resize-none outline-none focus:border-wallet-purple/50 transition-colors placeholder:text-wallet-muted/40"
-          placeholder="e.g. Ryan Rosenthal — UI/UX designer and product builder. I make creative work faster and AI more useful for non-technical people."
+          placeholder="e.g. Jane Smith — product designer and startup founder. 8 years building consumer apps..."
           autoFocus
         />
 
         <div className="flex items-center justify-between mt-3">
-          <span className={`mono text-[10px] ${draft.length > MAX_CONTENT_LENGTH ? "text-wallet-amber" : "text-wallet-muted"}`}>
-            {draft.length} / {MAX_CONTENT_LENGTH}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={`mono text-[10px] ${draft.length > MAX_CONTENT_LENGTH ? "text-wallet-amber" : "text-wallet-muted"}`}>
+              {draft.length} / {MAX_CONTENT_LENGTH}
+            </span>
+            {draft.trim().length === 0 && (
+              <button
+                onClick={() => setDraft(CARD_EXAMPLES.identity)}
+                className="flex items-center gap-1 px-2 py-1 text-wallet-purple bg-wallet-purple/10 rounded-full hover:bg-wallet-purple/20 transition-colors"
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z" />
+                </svg>
+                <span className="mono text-[10px]">Use example</span>
+              </button>
+            )}
+          </div>
 
           <div className="flex items-center gap-2">
             <button
@@ -104,7 +117,7 @@ export function Onboarding({ identityCard, onComplete }: OnboardingProps) {
 
   // Screen 3: Completion
   return (
-    <div className="flex flex-col items-center justify-center h-full px-6 text-center">
+    <div className="flex flex-col items-center justify-center h-full px-6 text-center view-fade">
       <div className="w-14 h-14 rounded-full bg-wallet-green/20 flex items-center justify-center mb-5">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-wallet-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 6 9 17l-5-5" />

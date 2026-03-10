@@ -108,3 +108,22 @@ export const APP_CARD_MAP: Record<DetectedApp, CardID[]> = {
 
 export const MAX_CONTENT_LENGTH = 2000;
 export const MAX_SUMMARY_LENGTH = 80;
+
+export const CARD_EXAMPLES: Record<CardID, string> = {
+  identity:
+    "Jane Smith — product designer and startup founder. 8 years building consumer apps. I care about craft, speed, and making complex tools feel simple. People describe me as direct, opinionated, and good at distilling ambiguity.",
+  voice:
+    "Concise and direct. Short sentences. No corporate speak. I use dashes and fragments. Lowercase when casual. Never say: leverage, synergy, deep dive, unpack, let's go. Warm but never sycophantic.",
+  expertise:
+    "Product design, brand strategy, and front-end development. Strong opinions on information architecture and design systems. Background in cognitive psychology. Deep in Figma, React, and Tailwind.",
+  currentWork:
+    "Building a personal AI context tool for macOS. Also advising two early-stage startups on product strategy. Current sprint: onboarding flow and MCP integration.",
+  audience:
+    "Creators and solo founders who use AI tools daily. They're frustrated by re-explaining themselves to every new chat. They want to feel understood, not generic. Fear: blending in. Desire: being seen as uniquely competent.",
+  aesthetic:
+    "Dark mode, glass surfaces, subtle gradients. Brutalist accents with generous whitespace. References: Linear, Arc Browser, Teenage Engineering. Typography-first. No rounded-everything, no AI slop.",
+  narrative:
+    "Spent years with great ideas but never shipped — not from inability, but from knowing too many failure patterns. Built tools to break that paralysis for others. Now building the identity layer for the AI era.",
+  goals:
+    "Ship beta to 50 users by end of month. Validate that personal context injection makes AI tools measurably more useful without extra effort from the user.",
+};

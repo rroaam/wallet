@@ -64,6 +64,23 @@ export function App() {
     }
   }, [lastInjection]);
 
+  // Escape key navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (view === "detail") {
+          setSelectedCard(null);
+          navigate("tray");
+        } else if (view === "settings") {
+          navigate("tray");
+        }
+        // editor handles its own Escape (unsaved changes guard)
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [view, navigate]);
+
   // Sync selected card with updated cards list
   useEffect(() => {
     if (selectedCard) {
