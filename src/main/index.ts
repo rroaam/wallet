@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, ipcMain, clipboard, screen, Menu } from "electron";
+import { app, BrowserWindow, Tray, ipcMain, clipboard, screen, Menu, globalShortcut } from "electron";
 import path from "path";
 import Store from "electron-store";
 import { startContextEngine, stopContextEngine } from "./context";
@@ -173,6 +173,10 @@ app.whenReady().then(() => {
   });
 
   createWindow();
+
+  // Global hotkey: Cmd+Shift+W to toggle
+  globalShortcut.register("CommandOrControl+Shift+W", toggleWindow);
+
   console.log("Wallet is ready");
 
   // Start context engine
@@ -184,6 +188,10 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", () => {
   // Keep running in tray
+});
+
+app.on("will-quit", () => {
+  globalShortcut.unregisterAll();
 });
 
 // ── IPC handlers ──────────────────────────────────────────────────────
