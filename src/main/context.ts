@@ -41,8 +41,8 @@ export function startContextEngine(
         lastBundleId = bundleId;
         const app = BUNDLE_TO_APP[bundleId] || "unknown";
 
-        // Don't inject when Wallet itself is frontmost
-        if (bundleId !== "com.designwithroam.wallet") {
+        // Don't inject when Wallet itself is frontmost or on unknown apps
+        if (bundleId !== "com.designwithroam.wallet" && app !== "unknown") {
           onAppChange(app);
         }
       }

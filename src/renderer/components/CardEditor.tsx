@@ -14,6 +14,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
   const meta = CARD_META[card.id];
   const isOverLimit = draft.length > MAX_CONTENT_LENGTH;
   const isEmpty = draft.trim().length === 0;
+  const hasChanges = draft !== card.content;
 
   const handleSave = () => {
     if (isEmpty) return;
@@ -22,6 +23,13 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       content: draft.slice(0, MAX_CONTENT_LENGTH),
       updatedAt: new Date().toISOString(),
     });
+  };
+
+  const handleClose = () => {
+    if (hasChanges) {
+      if (!window.confirm("You have unsaved changes. Discard?")) return;
+    }
+    onClose();
   };
 
   return (
@@ -35,7 +43,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
           </span>
         </div>
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="text-wallet-muted hover:text-wallet-white transition-colors"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

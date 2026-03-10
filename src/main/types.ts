@@ -33,3 +33,11 @@ export type DetectedApp =
   | "xcode"
   | "vscode"
   | "unknown";
+
+export type WalletState = "idle" | "injecting" | "trayOpen";
+
+export interface InjectionEvent {
+  cardIds: CardID[];
+  app: DetectedApp;
+  timestamp: string;
+}

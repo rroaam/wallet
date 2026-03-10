@@ -1,20 +1,28 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { WalletCard, CardID, InjectionEvent } from "./types";
 
 contextBridge.exposeInMainWorld("wallet", {
-  getCards: () => ipcRenderer.invoke("get-cards"),
-  updateCard: (card: any) => ipcRenderer.invoke("update-card", card),
-  injectCard: (cardId: string) => ipcRenderer.invoke("inject-card", cardId),
-  injectAllRelevant: (app: string) =>
+  getCards: (): Promise<WalletCard[]> => ipcRenderer.invoke("get-cards"),
+  updateCard: (card: WalletCard): Promise<WalletCard[]> =>
+    ipcRenderer.invoke("update-card", card),
+  injectCard: (cardId: CardID): Promise<WalletCard[]> =>
+    ipcRenderer.invoke("inject-card", cardId),
+  injectAllRelevant: (app: string): Promise<WalletCard[]> =>
     ipcRenderer.invoke("inject-all-relevant", app),
-  getOnboardingComplete: () => ipcRenderer.invoke("get-onboarding-complete"),
-  setOnboardingComplete: () => ipcRenderer.invoke("set-onboarding-complete"),
+  getOnboardingComplete: (): Promise<boolean> =>
+    ipcRenderer.invoke("get-onboarding-complete"),
+  setOnboardingComplete: (): Promise<boolean> =>
+    ipcRenderer.invoke("set-onboarding-complete"),
+  quitApp: (): Promise<void> => ipcRenderer.invoke("quit-app"),
+  setContextActive: (active: boolean): Promise<boolean> =>
+    ipcRenderer.invoke("set-context-active", active),
 
   // Event listeners
-  onInjection: (cb: (data: any) => void) => {
+  onInjection: (cb: (data: InjectionEvent) => void) => {
     ipcRenderer.on("injection", (_e, data) => cb(data));
     return () => ipcRenderer.removeAllListeners("injection");
   },
-  onCardsUpdated: (cb: (cards: any[]) => void) => {
+  onCardsUpdated: (cb: (cards: WalletCard[]) => void) => {
     ipcRenderer.on("cards-updated", (_e, cards) => cb(cards));
     return () => ipcRenderer.removeAllListeners("cards-updated");
   },

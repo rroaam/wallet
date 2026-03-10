@@ -1,7 +1,8 @@
 {
   "name": "wallet",
   "version": "1.0.0",
-  "description": "Personal AI context layer — menu bar app",
+  "description": "Personal AI context layer — menu bar app for macOS",
+  "author": "Ryan Rosenthal",
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
@@ -9,13 +10,38 @@
     "build:main": "tsc -p tsconfig.main.json",
     "build": "npm run build:renderer && npm run build:main",
     "start": "electron .",
-    "package": "npm run build && electron-builder",
+    "package": "npm run build && electron-builder --mac",
     "mcp:build": "cd mcp-server && npm run build",
     "mcp:start": "node mcp-server/index.js"
   },
+  "build": {
+    "appId": "com.designwithroam.wallet",
+    "productName": "Wallet",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": ["dmg"],
+      "icon": "assets/icon.icns",
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "title": "Wallet",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*",
+      "!assets/*.png",
+      "assets/trayIconTemplate.png"
+    ],
+    "directories": {
+      "output": "out"
+    }
+  },
   "dependencies": {
-    "electron-store": "^8.2.0",
-    "menubar": "^9.5.0"
+    "electron-store": "^8.2.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.0",

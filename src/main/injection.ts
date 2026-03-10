@@ -12,8 +12,8 @@ export function formatCards(cards: WalletCard[]): string {
 
   for (const card of cards) {
     const label = card.id
-      .replace("currentWork", "CURRENT WORK")
-      .toUpperCase();
+      .toUpperCase()
+      .replace("CURRENTWORK", "CURRENT WORK");
     lines.push(`${label}: ${card.content}`);
   }
 
