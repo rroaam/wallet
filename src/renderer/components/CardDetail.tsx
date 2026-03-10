@@ -69,23 +69,29 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
         </div>
 
         {/* Content text */}
-        <p className="text-[13px] text-wallet-white/85 leading-relaxed mb-4">
-          {card.content}
-        </p>
+        {card.content.trim().length > 0 ? (
+          <p className="text-[13px] text-wallet-white/85 leading-relaxed mb-4">
+            {card.content}
+          </p>
+        ) : (
+          <div className="glass rounded-lg px-4 py-6 mb-4 text-center">
+            <p className="text-[13px] text-wallet-muted">
+              No content yet. Tap edit to add your context.
+            </p>
+          </div>
+        )}
 
         {/* Metadata */}
         <div className="flex flex-col gap-2">
-          {card.lastInjected && (
-            <div className="flex items-center gap-1.5 text-wallet-muted">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="m16 12-4-4v8z" />
-              </svg>
-              <span className="mono text-[10px]">
-                Last injected {timeAgo(card.lastInjected)}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 text-wallet-muted">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="m16 12-4-4v8z" />
+            </svg>
+            <span className="mono text-[10px]">
+              Last injected: {card.lastInjected ? timeAgo(card.lastInjected) : "Never"}
+            </span>
+          </div>
           <span className="mono text-[10px] text-wallet-muted/60">
             Surfaces when: {meta.surfacesWhen}
           </span>
@@ -94,17 +100,23 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
 
       {/* Inject button */}
       <div className="px-4 pb-3 shrink-0">
-        <button
-          onClick={onInject}
-          className="gradient-btn w-full h-12 flex flex-col items-center justify-center"
-        >
-          <span className="text-[13px] font-semibold">Inject into Claude</span>
-          {card.lastInjected && (
-            <span className="mono text-[10px] opacity-50">
-              Last injected {timeAgo(card.lastInjected)}
-            </span>
-          )}
-        </button>
+        {card.content.trim().length > 0 ? (
+          <button
+            onClick={onInject}
+            className="gradient-btn w-full h-12 flex flex-col items-center justify-center"
+          >
+            <span className="text-[13px] font-semibold">Inject Context</span>
+            {card.lastInjected && (
+              <span className="mono text-[10px] opacity-50">
+                Last injected {timeAgo(card.lastInjected)}
+              </span>
+            )}
+          </button>
+        ) : (
+          <div className="w-full h-12 flex items-center justify-center rounded-full bg-wallet-surface border border-wallet-border">
+            <span className="text-[12px] text-wallet-muted">Add content to inject</span>
+          </div>
+        )}
       </div>
     </div>
   );

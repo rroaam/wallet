@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import type { WalletCard, CardID } from "@shared/types";
+import type { WalletCard, CardID, InjectionEvent } from "@shared/types";
 
 export function useCards() {
   const [cards, setCards] = useState<WalletCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastInjection, setLastInjection] = useState<InjectionEvent | null>(null);
 
   const fetchCards = useCallback(async () => {
     try {
@@ -19,12 +20,20 @@ export function useCards() {
   useEffect(() => {
     fetchCards();
 
-    // Listen for updates from main process
-    const unsub = window.wallet.onCardsUpdated((updated) => {
+    // Listen for card updates from main process
+    const unsubCards = window.wallet.onCardsUpdated((updated) => {
       setCards(updated);
     });
 
-    return unsub;
+    // Listen for injection events
+    const unsubInjection = window.wallet.onInjection((event) => {
+      setLastInjection(event);
+    });
+
+    return () => {
+      unsubCards();
+      unsubInjection();
+    };
   }, [fetchCards]);
 
   const updateCard = useCallback(async (card: WalletCard) => {
@@ -37,5 +46,5 @@ export function useCards() {
     if (updated) setCards(updated);
   }, []);
 
-  return { cards, loading, updateCard, injectCard, refetch: fetchCards };
+  return { cards, loading, updateCard, injectCard, lastInjection, refetch: fetchCards };
 }

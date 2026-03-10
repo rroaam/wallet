@@ -276,7 +276,34 @@ ipcMain.handle("inject-all-relevant", (_e, appName: string) => {
 
   const formatted = formatCards(relevant);
   clipboard.writeText(formatted);
-  return cards;
+
+  const now = new Date().toISOString();
+  const updated = cards.map((c) =>
+    relevantIds.includes(c.id) && c.content.trim().length > 0
+      ? { ...c, isActive: true, lastInjected: now }
+      : c
+  );
+  store.set("cards", updated);
+  syncCardsForMCP(updated);
+
+  win?.webContents.send("injection", {
+    cardIds: relevantIds,
+    app: detectedApp,
+    timestamp: now,
+  });
+
+  setTimeout(() => {
+    const current = store.get("cards");
+    store.set(
+      "cards",
+      current.map((c) =>
+        relevantIds.includes(c.id) ? { ...c, isActive: false } : c
+      )
+    );
+    win?.webContents.send("cards-updated", store.get("cards"));
+  }, 3000);
+
+  return updated;
 });
 
 ipcMain.handle("get-onboarding-complete", () =>

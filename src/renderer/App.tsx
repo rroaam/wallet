@@ -3,17 +3,32 @@ import { useCards } from "./hooks/useCards";
 import { CardTray } from "./components/CardTray";
 import { CardDetail } from "./components/CardDetail";
 import { CardEditor } from "./components/CardEditor";
+import { Onboarding } from "./components/Onboarding";
+import { Settings } from "./components/Settings";
 import type { WalletCard } from "@shared/types";
+
+type View = "loading" | "onboarding" | "tray" | "detail" | "editor" | "settings";
 
 export function App() {
   const { cards, loading, updateCard, injectCard } = useCards();
+  const [view, setView] = useState<View>("loading");
   const [selectedCard, setSelectedCard] = useState<WalletCard | null>(null);
   const [editingCard, setEditingCard] = useState<WalletCard | null>(null);
-  const [walletState, setWalletState] = useState<string>("idle");
+  const [contextActive, setContextActive] = useState(true);
 
+  // Check onboarding on mount
   useEffect(() => {
-    const unsub = window.wallet.onTrayState((state) => {
-      setWalletState(state);
+    if (!loading) {
+      window.wallet.getOnboardingComplete().then((complete) => {
+        setView(complete ? "tray" : "onboarding");
+      });
+    }
+  }, [loading]);
+
+  // Listen for tray state events
+  useEffect(() => {
+    const unsub = window.wallet.onTrayState(() => {
+      // Could use for animations later
     });
     return unsub;
   }, []);
@@ -26,7 +41,8 @@ export function App() {
     }
   }, [cards, selectedCard]);
 
-  if (loading) {
+  // Loading
+  if (view === "loading" || loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-wallet-bg">
         <div className="mono text-[11px] text-wallet-muted">Loading...</div>
@@ -34,8 +50,40 @@ export function App() {
     );
   }
 
-  // Editor overlay
-  if (editingCard) {
+  // Onboarding
+  if (view === "onboarding") {
+    const identityCard = cards.find((c) => c.id === "identity");
+    if (!identityCard) return null;
+
+    return (
+      <div className="h-screen bg-wallet-bg overflow-hidden">
+        <Onboarding
+          identityCard={identityCard}
+          onComplete={async (updated) => {
+            await updateCard(updated);
+            await window.wallet.setOnboardingComplete();
+            setView("tray");
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Settings
+  if (view === "settings") {
+    return (
+      <div className="h-screen bg-wallet-bg overflow-hidden">
+        <Settings
+          onBack={() => setView("tray")}
+          contextActive={contextActive}
+          onToggleContext={() => setContextActive(!contextActive)}
+        />
+      </div>
+    );
+  }
+
+  // Editor
+  if (view === "editor" && editingCard) {
     return (
       <div className="h-screen bg-wallet-bg overflow-hidden">
         <CardEditor
@@ -43,34 +91,48 @@ export function App() {
           onSave={(updated) => {
             updateCard(updated);
             setEditingCard(null);
+            setView("detail");
           }}
-          onClose={() => setEditingCard(null)}
+          onClose={() => {
+            setEditingCard(null);
+            setView("detail");
+          }}
         />
       </div>
     );
   }
 
-  // Detail view
-  if (selectedCard) {
+  // Detail
+  if (view === "detail" && selectedCard) {
     return (
-      <div className="h-screen bg-wallet-bg overflow-hidden animate-slide-in">
+      <div className="h-screen bg-wallet-bg overflow-hidden">
         <CardDetail
           card={selectedCard}
-          onBack={() => setSelectedCard(null)}
-          onEdit={() => setEditingCard(selectedCard)}
+          onBack={() => {
+            setSelectedCard(null);
+            setView("tray");
+          }}
+          onEdit={() => {
+            setEditingCard(selectedCard);
+            setView("editor");
+          }}
           onInject={() => injectCard(selectedCard.id)}
         />
       </div>
     );
   }
 
-  // Main tray
+  // Tray (default)
   return (
     <div className="h-screen bg-wallet-bg overflow-hidden">
       <CardTray
         cards={cards}
-        walletState={walletState}
-        onSelectCard={setSelectedCard}
+        contextActive={contextActive}
+        onSelectCard={(card) => {
+          setSelectedCard(card);
+          setView("detail");
+        }}
+        onOpenSettings={() => setView("settings")}
       />
     </div>
   );

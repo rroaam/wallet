@@ -106,5 +106,5 @@ export const APP_CARD_MAP: Record<DetectedApp, CardID[]> = {
   unknown: ["identity"],
 };
 
-export const MAX_CONTENT_LENGTH = 500;
+export const MAX_CONTENT_LENGTH = 2000;
 export const MAX_SUMMARY_LENGTH = 80;
