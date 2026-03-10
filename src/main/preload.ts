@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld("wallet", {
     ipcRenderer.invoke("get-onboarding-complete"),
   setOnboardingComplete: (): Promise<boolean> =>
     ipcRenderer.invoke("set-onboarding-complete"),
+  quitApp: (): Promise<void> => ipcRenderer.invoke("quit-app"),
+  setContextActive: (active: boolean): Promise<boolean> =>
+    ipcRenderer.invoke("set-context-active", active),
 
   // Event listeners
   onInjection: (cb: (data: InjectionEvent) => void) => {

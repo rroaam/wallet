@@ -1,20 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useCards } from "./hooks/useCards";
 import { CardTray } from "./components/CardTray";
 import { CardDetail } from "./components/CardDetail";
 import { CardEditor } from "./components/CardEditor";
 import { Onboarding } from "./components/Onboarding";
 import { Settings } from "./components/Settings";
+import { InjectToast } from "./components/InjectToast";
 import type { WalletCard } from "@shared/types";
 
 type View = "loading" | "onboarding" | "tray" | "detail" | "editor" | "settings";
 
 export function App() {
-  const { cards, loading, updateCard, injectCard } = useCards();
+  const { cards, loading, updateCard, injectCard, lastInjection } = useCards();
   const [view, setView] = useState<View>("loading");
   const [selectedCard, setSelectedCard] = useState<WalletCard | null>(null);
   const [editingCard, setEditingCard] = useState<WalletCard | null>(null);
   const [contextActive, setContextActive] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastCardCount, setToastCardCount] = useState(0);
+
+  const toggleContext = useCallback(async () => {
+    const next = !contextActive;
+    setContextActive(next);
+    await window.wallet.setContextActive(next);
+  }, [contextActive]);
 
   // Check onboarding on mount
   useEffect(() => {
@@ -32,6 +41,14 @@ export function App() {
     });
     return unsub;
   }, []);
+
+  // Show toast on injection events (ambient)
+  useEffect(() => {
+    if (lastInjection) {
+      setToastCardCount(lastInjection.cardIds.length);
+      setShowToast(true);
+    }
+  }, [lastInjection]);
 
   // Sync selected card with updated cards list
   useEffect(() => {
@@ -76,7 +93,7 @@ export function App() {
         <Settings
           onBack={() => setView("tray")}
           contextActive={contextActive}
-          onToggleContext={() => setContextActive(!contextActive)}
+          onToggleContext={toggleContext}
         />
       </div>
     );
@@ -116,7 +133,16 @@ export function App() {
             setEditingCard(selectedCard);
             setView("editor");
           }}
-          onInject={() => injectCard(selectedCard.id)}
+          onInject={async () => {
+            await injectCard(selectedCard.id);
+            setToastCardCount(1);
+            setShowToast(true);
+          }}
+        />
+        <InjectToast
+          visible={showToast}
+          cardCount={toastCardCount}
+          onDone={() => setShowToast(false)}
         />
       </div>
     );
@@ -133,6 +159,11 @@ export function App() {
           setView("detail");
         }}
         onOpenSettings={() => setView("settings")}
+      />
+      <InjectToast
+        visible={showToast}
+        cardCount={toastCardCount}
+        onDone={() => setShowToast(false)}
       />
     </div>
   );

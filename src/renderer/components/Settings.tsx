@@ -68,10 +68,7 @@ export function Settings({ onBack, contextActive, onToggleContext }: SettingsPro
 
         {/* Quit */}
         <button
-          onClick={() => {
-            // This would call app.quit() via IPC in the real implementation
-            window.close();
-          }}
+          onClick={() => window.wallet.quitApp()}
           className="w-full py-3 text-left"
         >
           <span className="text-[13px] text-red-400 hover:text-red-300 transition-colors">

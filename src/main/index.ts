@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Tray, ipcMain, clipboard, screen, Menu } from "electron";
 import path from "path";
 import Store from "electron-store";
-import { startContextEngine } from "./context";
+import { startContextEngine, stopContextEngine } from "./context";
 import { formatCards } from "./injection";
 import { WalletCard, CardID, DetectedApp } from "./types";
 import { CARD_META, APP_CARD_MAP } from "./constants";
@@ -313,6 +313,55 @@ ipcMain.handle("get-onboarding-complete", () =>
 ipcMain.handle("set-onboarding-complete", () => {
   store.set("onboardingComplete", true);
   return true;
+});
+
+ipcMain.handle("quit-app", () => {
+  app.quit();
+});
+
+ipcMain.handle("set-context-active", (_e, active: boolean) => {
+  if (active) {
+    startContextEngine((detectedApp: DetectedApp) => {
+      const cards = store.get("cards");
+      const relevantIds = APP_CARD_MAP[detectedApp] || ["identity"];
+      const relevantCards = cards.filter(
+        (c) => relevantIds.includes(c.id) && c.content.trim().length > 0
+      );
+
+      if (relevantCards.length > 0) {
+        const formatted = formatCards(relevantCards);
+        clipboard.writeText(formatted);
+
+        const now = new Date().toISOString();
+        const updated = cards.map((c) =>
+          relevantIds.includes(c.id)
+            ? { ...c, isActive: true, lastInjected: now }
+            : c
+        );
+        store.set("cards", updated);
+
+        win?.webContents.send("injection", {
+          cardIds: relevantIds,
+          app: detectedApp,
+          timestamp: now,
+        });
+
+        setTimeout(() => {
+          const current = store.get("cards");
+          store.set(
+            "cards",
+            current.map((c) =>
+              relevantIds.includes(c.id) ? { ...c, isActive: false } : c
+            )
+          );
+          win?.webContents.send("cards-updated", store.get("cards"));
+        }, 3000);
+      }
+    });
+  } else {
+    stopContextEngine();
+  }
+  return active;
 });
 
 app.on("window-all-closed", () => {
