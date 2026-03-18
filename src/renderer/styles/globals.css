@@ -13,6 +13,24 @@
   --color-wallet-muted: #6B7280;
 }
 
+:root {
+  --shadow-glass: 0 4px 24px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
+  --shadow-glow-purple: 0 0 20px rgba(123,97,255,0.15);
+  --shadow-glow-cyan: 0 0 20px rgba(0,217,232,0.15);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Card-type accent colors */
+  --accent-identity: #7B61FF;
+  --accent-voice: #00D9E8;
+  --accent-expertise: #F59E0B;
+  --accent-currentWork: #10B981;
+  --accent-audience: #EC4899;
+  --accent-aesthetic: #8B5CF6;
+  --accent-narrative: #F97316;
+  --accent-goals: #06B6D4;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -45,14 +63,41 @@ body {
 /* Glass card base */
 .glass {
   background: rgba(19, 20, 30, 0.8);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .glass-active {
   border-image: linear-gradient(to right, var(--color-wallet-purple), var(--color-wallet-cyan)) 1;
+}
+
+/* Glass row — card list items with hover lift */
+.glass-row {
+  transition: all 0.2s var(--ease-spring);
+}
+
+.glass-row:hover {
+  transform: translateY(-1px);
+  background: rgba(19, 20, 30, 0.6);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Glass input — textarea/input with inner shadow and focus glow */
+.glass-input {
+  background: rgba(19, 20, 30, 0.6);
+  border: 1px solid var(--color-wallet-border);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  outline: none;
+  transition: border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+}
+
+.glass-input:focus {
+  border-color: rgba(123, 97, 255, 0.5);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(123, 97, 255, 0.1);
 }
 
 /* Gradient text */
@@ -70,7 +115,7 @@ body {
   border-radius: 9999px;
   color: white;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s var(--ease-spring);
 }
 
 .gradient-btn:hover {
@@ -78,7 +123,7 @@ body {
 }
 
 .gradient-btn:active {
-  transform: scale(0.98);
+  animation: press 0.15s var(--ease-spring);
 }
 
 /* Monospaced text */
@@ -86,7 +131,9 @@ body {
   font-family: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
 }
 
-/* View transitions */
+/* ---- Keyframes ---- */
+
+/* View transitions — spring easing */
 @keyframes slide-in-right {
   from { opacity: 0; transform: translateX(40px); }
   to { opacity: 1; transform: translateX(0); }
@@ -103,22 +150,57 @@ body {
 }
 
 .view-forward {
-  animation: slide-in-right 0.2s ease-out;
+  animation: slide-in-right 0.25s var(--ease-spring);
 }
 
 .view-back {
-  animation: slide-in-left 0.2s ease-out;
+  animation: slide-in-left 0.25s var(--ease-spring);
 }
 
 .view-fade {
-  animation: fade-in 0.15s ease-out;
+  animation: fade-in 0.2s var(--ease-smooth);
 }
 
-/* Toast animation */
-@keyframes toast-in {
+/* Stagger in — cards cascade */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Breathe — active indicator pulse */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+/* Checkmark stroke draw */
+@keyframes checkmark-draw {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Button press feedback */
+@keyframes press {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* Toast entrance with spring overshoot */
+@keyframes slide-up-spring {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(8px) scale(0.95);
+    transform: translateX(-50%) translateY(12px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-3px) scale(1.02);
   }
   100% {
     opacity: 1;
@@ -126,6 +208,36 @@ body {
   }
 }
 
+/* Toast exit */
+@keyframes fade-scale-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px) scale(1.03);
+  }
+}
+
+/* Toast animation classes */
+.animate-toast-enter {
+  animation: slide-up-spring 0.35s var(--ease-spring) forwards;
+}
+
+.animate-toast-exit {
+  animation: fade-scale-out 0.2s var(--ease-smooth) forwards;
+}
+
+/* Legacy toast class — kept as alias */
 .animate-toast-in {
-  animation: toast-in 0.2s ease-out;
+  animation: slide-up-spring 0.35s var(--ease-spring);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

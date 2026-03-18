@@ -1,5 +1,16 @@
 import type { CardID, DetectedApp } from "./types";
 
+export const CARD_ACCENT_COLORS: Record<CardID, string> = {
+  identity: "#7B61FF",
+  voice: "#00D9E8",
+  expertise: "#F59E0B",
+  currentWork: "#10B981",
+  audience: "#EC4899",
+  aesthetic: "#8B5CF6",
+  narrative: "#F97316",
+  goals: "#06B6D4",
+};
+
 export const CARD_META: Record<
   CardID,
   {
