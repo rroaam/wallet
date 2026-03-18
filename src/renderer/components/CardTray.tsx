@@ -47,7 +47,10 @@ export function CardTray({ cards, contextActive, onSelectCard, onOpenSettings }:
   return (
     <div className="flex flex-col h-full">
       {/* Header — 44px */}
-      <div className="flex items-center justify-between px-3.5 h-11 shrink-0">
+      <div
+        className="flex items-center justify-between px-3.5 h-11 shrink-0"
+        style={{ borderBottom: "1px solid rgba(123, 97, 255, 0.08)" }}
+      >
         {searching ? (
           <div className="flex items-center gap-2 flex-1">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-wallet-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -59,7 +62,8 @@ export function CardTray({ cards, contextActive, onSelectCard, onOpenSettings }:
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search cards..."
-              className="flex-1 bg-transparent text-[13px] text-wallet-white outline-none placeholder:text-wallet-muted/40"
+              className="glass-input flex-1 bg-transparent px-2 py-1 text-[13px] text-wallet-white placeholder:text-wallet-muted/40 border-none shadow-none"
+              style={{ boxShadow: "none" }}
             />
             <button
               onClick={() => { setSearching(false); setQuery(""); }}
@@ -73,7 +77,7 @@ export function CardTray({ cards, contextActive, onSelectCard, onOpenSettings }:
           </div>
         ) : (
           <>
-            <span className="mono text-[11px] text-wallet-cyan tracking-wider">
+            <span className="mono text-[11px] text-wallet-cyan tracking-[0.2em]">
               WALLET
             </span>
             <button
@@ -93,24 +97,42 @@ export function CardTray({ cards, contextActive, onSelectCard, onOpenSettings }:
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-px">
           {filtered.length > 0 ? (
-            filtered.map((card) => (
+            filtered.map((card, i) => (
               <CardRow
                 key={card.id}
                 card={card}
+                index={i}
                 onClick={() => onSelectCard(card)}
               />
             ))
           ) : (
-            <div className="flex items-center justify-center py-8">
-              <span className="text-[12px] text-wallet-muted">No matching cards</span>
+            <div className="flex flex-col items-center justify-center py-8 mx-3.5">
+              <div className="glass rounded-xl px-6 py-5 text-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-wallet-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                <span className="text-[12px] text-wallet-muted">No matching cards</span>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Footer — 36px */}
-      <div className="flex items-center gap-1.5 px-3.5 h-9 shrink-0 bg-wallet-surface/50">
-        <div className={`w-1.5 h-1.5 rounded-full ${contextActive ? "bg-wallet-green animate-pulse" : "bg-wallet-muted"}`} />
+      {/* Footer — 36px, glass surface */}
+      <div
+        className="flex items-center gap-1.5 px-3.5 h-9 shrink-0"
+        style={{
+          background: "rgba(19, 20, 30, 0.6)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          borderTop: "1px solid rgba(255, 255, 255, 0.04)",
+        }}
+      >
+        <div
+          className={`w-1.5 h-1.5 rounded-full ${contextActive ? "bg-wallet-green" : "bg-wallet-muted"}`}
+          style={contextActive ? { animation: "breathe 2s ease-in-out infinite" } : undefined}
+        />
         <span className="mono text-[10px] text-wallet-muted">
           {contextActive ? "CONTEXT ACTIVE" : "CONTEXT PAUSED"}
         </span>

@@ -91,11 +91,14 @@ export function App() {
 
   const anim = transitionClass(prevView, view);
 
-  // Loading
+  // Loading — breathing dot
   if (view === "loading" || loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-wallet-bg">
-        <div className="mono text-[11px] text-wallet-muted">Loading...</div>
+        <div
+          className="w-2 h-2 rounded-full bg-wallet-purple/60"
+          style={{ animation: "breathe 1.5s ease-in-out infinite" }}
+        />
       </div>
     );
   }

@@ -29,9 +29,14 @@ export function Settings({ onBack, contextActive, onToggleContext }: SettingsPro
       <div className="h-px bg-wallet-border" />
 
       {/* Settings list */}
-      <div className="flex-1 overflow-y-auto px-3.5 py-3">
-        {/* Context Engine toggle */}
-        <div className="flex items-center justify-between py-3">
+      <div className="flex-1 overflow-y-auto px-3.5 py-3 flex flex-col gap-2">
+        {/* Section label */}
+        <span className="mono text-[9px] text-wallet-muted/60 uppercase tracking-[0.15em] px-1">
+          Engine
+        </span>
+
+        {/* Context Engine toggle — glass card */}
+        <div className="glass rounded-xl px-3.5 py-3 flex items-center justify-between">
           <div>
             <span className="text-[13px] text-wallet-white">Context Engine</span>
             <p className="text-[11px] text-wallet-muted mt-0.5">
@@ -40,38 +45,44 @@ export function Settings({ onBack, contextActive, onToggleContext }: SettingsPro
           </div>
           <button
             onClick={onToggleContext}
-            className={`
-              relative w-10 h-[22px] rounded-full transition-colors duration-200
-              ${contextActive ? "bg-wallet-green" : "bg-wallet-surface border border-wallet-border"}
-            `}
+            className="relative w-10 h-[22px] rounded-full transition-all duration-200"
+            style={{
+              background: contextActive ? "var(--color-wallet-green)" : "var(--color-wallet-surface)",
+              border: contextActive ? "none" : "1px solid var(--color-wallet-border)",
+              boxShadow: contextActive
+                ? "inset 0 1px 2px rgba(0,0,0,0.15), 0 0 8px rgba(16,185,129,0.3)"
+                : "inset 0 1px 2px rgba(0,0,0,0.15)",
+            }}
           >
             <div
-              className={`
-                absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white transition-transform duration-200
-                ${contextActive ? "translate-x-[20px]" : "translate-x-[2px]"}
-              `}
+              className="absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white"
+              style={{
+                transition: "transform 0.25s var(--ease-spring)",
+                transform: contextActive ? "translateX(20px)" : "translateX(2px)",
+              }}
             />
           </button>
         </div>
 
-        <div className="h-px bg-wallet-border" />
+        {/* Section label */}
+        <span className="mono text-[9px] text-wallet-muted/60 uppercase tracking-[0.15em] px-1 mt-2">
+          General
+        </span>
 
-        {/* About */}
-        <div className="py-3">
+        {/* About — glass card */}
+        <div className="glass rounded-xl px-3.5 py-3">
           <span className="text-[13px] text-wallet-white">About</span>
           <p className="text-[11px] text-wallet-muted mt-0.5">
             Wallet v1.0.0 — Personal AI context layer
           </p>
         </div>
 
-        <div className="h-px bg-wallet-border" />
-
-        {/* Quit */}
+        {/* Quit — glass card */}
         <button
           onClick={() => window.wallet.quitApp()}
-          className="w-full py-3 text-left"
+          className="glass rounded-xl px-3.5 py-3 text-left w-full transition-colors duration-200 hover:bg-red-500/[0.06]"
         >
-          <span className="text-[13px] text-red-400 hover:text-red-300 transition-colors">
+          <span className="text-[13px] text-red-400">
             Quit Wallet
           </span>
         </button>

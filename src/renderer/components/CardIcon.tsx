@@ -1,7 +1,10 @@
+import type { JSX } from "react";
+
 interface CardIconProps {
   name: string;
   className?: string;
   size?: number;
+  style?: React.CSSProperties;
 }
 
 const ICONS: Record<string, (size: number) => JSX.Element> = {
@@ -67,9 +70,9 @@ const ICONS: Record<string, (size: number) => JSX.Element> = {
   ),
 };
 
-export function CardIcon({ name, className = "", size = 16 }: CardIconProps) {
+export function CardIcon({ name, className = "", size = 16, style }: CardIconProps) {
   const icon = ICONS[name];
   if (!icon) return null;
 
-  return <div className={className}>{icon(size)}</div>;
+  return <div className={className} style={style}>{icon(size)}</div>;
 }

@@ -1,5 +1,5 @@
 import { CardIcon } from "./CardIcon";
-import { CARD_META } from "@shared/constants";
+import { CARD_META, CARD_ACCENT_COLORS } from "@shared/constants";
 import type { WalletCard } from "@shared/types";
 
 interface CardDetailProps {
@@ -22,6 +22,7 @@ function timeAgo(dateStr: string | null): string {
 
 export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) {
   const meta = CARD_META[card.id];
+  const accent = CARD_ACCENT_COLORS[card.id];
 
   return (
     <div className="flex flex-col h-full">
@@ -51,15 +52,21 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
         </button>
       </div>
 
-      <div className="h-px bg-wallet-border" />
+      {/* Gradient divider */}
+      <div
+        className="h-px"
+        style={{
+          background: `linear-gradient(to right, transparent, ${accent}40, transparent)`,
+        }}
+      />
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-3.5 py-3">
+      <div className="flex-1 overflow-y-auto px-5 py-5">
         {/* Icon + name */}
-        <div className="flex items-center gap-2.5 mb-4">
-          <CardIcon name={meta.icon} className="text-wallet-purple" size={20} />
+        <div className="flex items-center gap-3 mb-6">
+          <CardIcon name={meta.icon} style={{ color: accent }} size={22} />
           <div>
-            <h2 className="text-[17px] font-semibold text-wallet-white">
+            <h2 className="text-[18px] font-semibold text-wallet-white">
               {card.name}
             </h2>
             <span className="mono text-[10px] text-wallet-muted">
@@ -70,20 +77,20 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
 
         {/* Content text */}
         {card.content.trim().length > 0 ? (
-          <p className="text-[13px] text-wallet-white/85 leading-relaxed mb-4">
+          <p className="text-[13px] text-wallet-white/85 leading-[1.7] mb-6">
             {card.content}
           </p>
         ) : (
-          <div className="glass rounded-lg px-4 py-6 mb-4 text-center">
+          <div className="glass rounded-lg px-5 py-8 mb-6 text-center">
             <p className="text-[13px] text-wallet-muted">
               No content yet. Tap edit to add your context.
             </p>
           </div>
         )}
 
-        {/* Metadata */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1.5 text-wallet-muted">
+        {/* Metadata — glass card */}
+        <div className="glass rounded-lg px-4 py-3.5">
+          <div className="flex items-center gap-2 text-wallet-muted">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="m16 12-4-4v8z" />
@@ -92,18 +99,24 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
               Last injected: {card.lastInjected ? timeAgo(card.lastInjected) : "Never"}
             </span>
           </div>
-          <span className="mono text-[10px] text-wallet-muted/60">
+          <span className="mono text-[10px] text-wallet-muted/60 mt-2 block">
             Surfaces when: {meta.surfacesWhen}
           </span>
         </div>
       </div>
 
       {/* Inject button */}
-      <div className="px-4 pb-3 shrink-0">
+      <div className="px-5 pb-4 shrink-0">
         {card.content.trim().length > 0 ? (
           <button
             onClick={onInject}
-            className="gradient-btn w-full h-12 flex flex-col items-center justify-center"
+            className="w-full h-12 flex flex-col items-center justify-center rounded-full border-none text-white cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, ${accent}, var(--color-wallet-cyan))`,
+              transition: "opacity 0.15s ease, transform 0.15s var(--ease-spring)",
+            }}
+            onMouseDown={(e) => (e.currentTarget.style.animation = "press 0.15s var(--ease-spring)")}
+            onAnimationEnd={(e) => (e.currentTarget.style.animation = "")}
           >
             <span className="text-[13px] font-semibold">Inject Context</span>
             {card.lastInjected && (

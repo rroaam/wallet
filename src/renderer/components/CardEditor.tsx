@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CardIcon } from "./CardIcon";
-import { CARD_META, CARD_EXAMPLES, MAX_CONTENT_LENGTH } from "@shared/constants";
+import { CARD_META, CARD_EXAMPLES, CARD_ACCENT_COLORS, MAX_CONTENT_LENGTH } from "@shared/constants";
 import type { WalletCard } from "@shared/types";
 
 interface CardEditorProps {
@@ -12,9 +12,14 @@ interface CardEditorProps {
 export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
   const [draft, setDraft] = useState(card.content);
   const meta = CARD_META[card.id];
+  const accent = CARD_ACCENT_COLORS[card.id];
   const isOverLimit = draft.length > MAX_CONTENT_LENGTH;
   const isEmpty = draft.trim().length === 0;
   const hasChanges = draft !== card.content;
+
+  // Character counter color: muted -> amber -> red
+  const charRatio = draft.length / MAX_CONTENT_LENGTH;
+  const counterColor = charRatio > 1 ? "#EF4444" : charRatio > 0.9 ? "#F59E0B" : undefined;
 
   const handleSave = () => {
     if (isEmpty) return;
@@ -61,8 +66,8 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <CardIcon name={meta.icon} className="text-wallet-purple" size={16} />
-          <span className="text-[17px] font-semibold text-wallet-white">
+          <CardIcon name={meta.icon} style={{ color: accent }} size={16} />
+          <span className="text-[17px] font-semibold text-wallet-white tracking-tight">
             {card.name}
           </span>
         </div>
@@ -84,7 +89,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       <textarea
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        className="flex-1 w-full p-3 text-[14px] text-wallet-white bg-wallet-surface border border-wallet-border rounded-lg resize-none outline-none focus:border-wallet-purple/50 transition-colors placeholder:text-wallet-muted/40"
+        className="glass-input flex-1 w-full p-3 text-[14px] text-wallet-white resize-none placeholder:text-wallet-muted/40"
         placeholder={`Write your ${card.name.toLowerCase()} here...`}
         autoFocus
       />
@@ -107,7 +112,8 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       {/* Footer */}
       <div className="flex items-center justify-between mt-4">
         <span
-          className={`mono text-[10px] ${isOverLimit ? "text-wallet-amber" : "text-wallet-muted"}`}
+          className="mono text-[10px] transition-colors duration-300"
+          style={{ color: counterColor ?? "var(--color-wallet-muted)" }}
         >
           {draft.length} / {MAX_CONTENT_LENGTH}
         </span>
