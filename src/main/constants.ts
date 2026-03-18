@@ -27,6 +27,14 @@ export const BUNDLE_TO_APP: Record<string, DetectedApp> = {
   "com.todesktop.230313mzl4w4u92": "cursor",
   "com.apple.dt.Xcode": "xcode",
   "com.microsoft.VSCode": "vscode",
+  "company.thebrowser.Browser": "arc",
+  "dev.warp.Warp-Stable": "warp",
+  "com.raycast.macos": "raycast",
+  "ai.perplexity.mac": "perplexity",
+  "com.colliderli.Ollama": "ollama",
+  "com.lmstudio.app": "lmstudio",
+  "com.microsoft.edgemac": "copilot",
+  "com.google.android.apps.bard": "gemini",
 };
 
 export const APP_CARD_MAP: Record<DetectedApp, CardID[]> = {
@@ -41,5 +49,13 @@ export const APP_CARD_MAP: Record<DetectedApp, CardID[]> = {
   cursor: ["currentWork", "expertise"],
   xcode: ["currentWork", "expertise"],
   vscode: ["currentWork", "expertise"],
+  gemini: ["voice", "identity", "expertise"],
+  arc: ["identity", "currentWork"],
+  warp: ["currentWork", "expertise"],
+  raycast: ["currentWork", "expertise"],
+  perplexity: ["voice", "identity", "expertise"],
+  ollama: ["expertise", "currentWork"],
+  lmstudio: ["expertise", "currentWork"],
+  copilot: ["voice", "identity", "expertise"],
   unknown: ["identity"],
 };

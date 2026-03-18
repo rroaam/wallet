@@ -42,6 +42,14 @@ export type DetectedApp =
   | "cursor"
   | "xcode"
   | "vscode"
+  | "gemini"
+  | "arc"
+  | "warp"
+  | "raycast"
+  | "perplexity"
+  | "ollama"
+  | "lmstudio"
+  | "copilot"
   | "unknown";
 
 export type WalletState = "idle" | "injecting" | "trayOpen";
