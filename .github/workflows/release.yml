@@ -5,6 +5,15 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to GitHub Releases (set to "always" for real release, "never" for dry-run)'
+        required: true
+        type: choice
+        default: 'never'
+        options:
+          - never
+          - always
 
 jobs:
   release:
@@ -58,4 +67,19 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           CSC_KEYCHAIN: ${{ runner.temp }}/build.keychain
-        run: npm run release
+          CSC_IDENTITY_AUTO_DISCOVERY: 'true'
+          PUBLISH_MODE: ${{ github.event.inputs.publish || 'always' }}
+        run: npm run build && npx electron-builder --mac --publish "$PUBLISH_MODE"
+
+      - name: Upload dry-run artifacts
+        if: github.event.inputs.publish == 'never'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wallet-dry-run-${{ github.sha }}
+          path: |
+            out/*.dmg
+            out/*.zip
+            out/*.yml
+            out/*.blockmap
+          if-no-files-found: warn
+          retention-days: 7
