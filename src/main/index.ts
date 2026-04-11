@@ -1,6 +1,7 @@
 import { app, BrowserWindow, Tray, ipcMain, clipboard, screen, Menu, globalShortcut } from "electron";
 import path from "path";
 import Store from "electron-store";
+import { autoUpdater } from "electron-updater";
 import { startContextEngine, stopContextEngine } from "./context";
 import { formatCards } from "./injection";
 import { WalletCard, CardID, DetectedApp } from "./types";
@@ -184,6 +185,20 @@ app.whenReady().then(() => {
 
   // Sync cards for MCP on startup
   syncCardsForMCP(store.get("cards"));
+
+  // Auto-updates (checks GitHub Releases, downloads + installs on quit)
+  if (!isDev) {
+    autoUpdater.logger = console;
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+      console.error("Update check failed:", err);
+    });
+    // Re-check every 4 hours
+    setInterval(() => {
+      autoUpdater.checkForUpdates().catch(() => {});
+    }, 4 * 60 * 60 * 1000);
+  }
 });
 
 app.on("window-all-closed", () => {
