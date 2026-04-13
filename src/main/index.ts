@@ -101,8 +101,8 @@ function injectForApp(detectedApp: DetectedApp) {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 320,
-    height: 520,
+    width: 340,
+    height: 580,
     show: false,
     frame: false,
     resizable: false,
@@ -111,7 +111,11 @@ function createWindow() {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    backgroundColor: "#090A11",
+    transparent: true,
+    vibrancy: "under-window",
+    visualEffectState: "active",
+    hasShadow: true,
+    roundedCorners: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,

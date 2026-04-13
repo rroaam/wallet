@@ -11,54 +11,60 @@ interface CardRowProps {
 export function CardRow({ card, index, onClick }: CardRowProps) {
   const meta = CARD_META[card.id];
   const accent = CARD_ACCENT_COLORS[card.id];
+  const isFilled = card.content.trim().length > 0;
+
+  // Primary status line: summary > surfacesWhen fallback > "Not set"
+  const statusLine = isFilled
+    ? card.summary || "Filled"
+    : "Not set";
 
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`
-        glass-row flex items-center gap-3 w-full px-3.5 py-2.5 h-[52px] text-left
-        ${card.isActive ? "bg-wallet-purple/[0.06]" : ""}
-      `}
+      data-active={card.isActive ? "true" : "false"}
+      className="cc-shell flex items-center gap-3 w-full h-[66px] px-3.5 py-3 text-left border-0 outline-none"
       style={{
-        borderLeft: `2px solid ${accent}`,
-        animation: `stagger-in 0.3s var(--ease-spring) both`,
-        animationDelay: `${index * 40}ms`,
-        ...(card.isActive
-          ? {
-              boxShadow: "inset 0 0 0 1px transparent",
-              borderImage:
-                `linear-gradient(to right, ${accent}, var(--color-wallet-cyan)) 1`,
-            }
-          : {}),
+        animation: `stagger-in 0.35s var(--ease-spring) both`,
+        animationDelay: `${index * 35}ms`,
       }}
     >
-      {/* Icon */}
-      <div className="w-6 flex items-center justify-center shrink-0">
-        <CardIcon name={meta.icon} style={{ color: accent }} size={16} />
+      {/* Colored icon circle */}
+      <div
+        className="cc-icon"
+        data-empty={!isFilled}
+        style={
+          isFilled
+            ? {
+                background: accent,
+              }
+            : undefined
+        }
+      >
+        <CardIcon name={meta.icon} size={14} style={{ color: "currentColor" }} />
       </div>
 
-      {/* Labels */}
-      <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-        <span className="text-[13px] font-medium text-wallet-white truncate">
+      {/* Name + status */}
+      <div className="flex flex-col min-w-0 flex-1">
+        <span className="text-[13px] font-semibold text-wallet-white leading-[1.2] tracking-[-0.01em] truncate">
           {card.name}
         </span>
-        <span className="mono text-[11px] text-wallet-muted truncate">
-          {card.summary || meta.surfacesWhen}
+        <span className="text-[11px] text-wallet-white/55 leading-[1.2] truncate mt-0.5">
+          {statusLine}
         </span>
       </div>
 
-      {/* Active indicator */}
+      {/* Active pulse */}
       {card.isActive && (
         <div
-          className="w-[5px] h-[5px] rounded-full bg-wallet-cyan shrink-0"
-          style={{ animation: "breathe 2s ease-in-out infinite" }}
+          className="w-[6px] h-[6px] rounded-full shrink-0"
+          style={{
+            background: accent,
+            boxShadow: `0 0 10px ${accent}`,
+            animation: "breathe 1.8s ease-in-out infinite",
+          }}
         />
       )}
-
-      {/* Tag */}
-      <span className="mono text-[10px] text-wallet-muted/50 shrink-0 uppercase tracking-widest">
-        {meta.tag}
-      </span>
     </button>
   );
 }

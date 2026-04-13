@@ -2,6 +2,18 @@
 
 All notable changes to Wallet will be documented in this file.
 
+## [1.0.2] — 2026-04
+
+### Changed — Control Center UI refresh
+- Window now uses native macOS `under-window` vibrancy + `transparent: true` so the popover blurs your desktop instead of drawing a solid `#090A11`.
+- Widened the popover from 320×520 → 340×580 for proper breathing room.
+- Outer window corners rounded to 20px with a hairline inset border (matches Control Center / Focus modes panel).
+- CardTray is now a 2-column grid of chunky 14px-radius cells with filled colored icon circles (per-card accent) and tight label / status hierarchy — not a thin list of rows.
+- Header is now a "chrome bar": Wallet wordmark + filled/8 count on the left, pill icon buttons for search + settings on the right.
+- Context Engine moved from a mono-text footer into a Control Center-style status cell with a pulsing accent dot.
+- CardDetail and Settings headers match the same chrome bar.
+- Settings cards use the new `cc-shell` material (translucent tile with hairline) instead of the darker solid `glass`.
+
 ## [1.0.1] — 2026-04
 
 ### Fixed

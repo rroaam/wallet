@@ -26,39 +26,31 @@ export function CardDetail({ card, onBack, onEdit, onInject }: CardDetailProps) 
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header — 44px */}
-      <div className="flex items-center justify-between px-3.5 h-11 shrink-0">
+      {/* Header — Control Center chrome bar */}
+      <div className="cc-chrome flex items-center justify-between px-5 h-12 shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-wallet-muted hover:text-wallet-white transition-colors"
+          className="flex items-center gap-1 text-white/55 hover:text-white transition-colors"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
           </svg>
-          <span className="text-[13px]">Back</span>
+          <span className="text-[13px] font-medium">Back</span>
         </button>
 
-        <span className="text-[13px] font-semibold text-wallet-white">
+        <span className="text-[13px] font-semibold text-wallet-white tracking-[-0.01em]">
           {card.name}
         </span>
 
         <button
           onClick={onEdit}
-          className="text-wallet-muted hover:text-wallet-white transition-colors"
+          className="w-7 h-7 rounded-full flex items-center justify-center text-white/55 hover:text-white hover:bg-white/[0.08] transition-all"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
           </svg>
         </button>
       </div>
-
-      {/* Gradient divider */}
-      <div
-        className="h-px"
-        style={{
-          background: `linear-gradient(to right, transparent, ${accent}40, transparent)`,
-        }}
-      />
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 py-5">

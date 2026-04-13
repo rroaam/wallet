@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Personal AI context layer — menu bar app for macOS",
   "author": "Ryan Rosenthal",
   "main": "dist/main/index.js",
