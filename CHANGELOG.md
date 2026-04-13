@@ -2,6 +2,16 @@
 
 All notable changes to Wallet will be documented in this file.
 
+## [1.0.1] — 2026-04
+
+### Fixed
+- **Blank window on packaged app.** The dev/prod check used `NODE_ENV`, which is unset in packaged Electron builds, so v1.0.0 tried to load the Vite dev server and showed an empty tray popover. Switched to `!app.isPackaged`, the canonical Electron detection.
+
+### Added (new in v1.0.1 but shipped alongside the fix)
+- Local HTTP bridge on `127.0.0.1:9847` with per-device bearer token in `electron-store`. Endpoints: `GET /health`, `GET /cards`, `GET /context?host=…`, `POST /cards/:id`.
+- Settings → Browser Extension section exposing the pairing token (show / hide / copy).
+- Chrome/Arc/Edge extension (`extension/`) — MV3, floating button on claude.ai, chatgpt.com, gemini.google.com, perplexity.ai, copilot.microsoft.com, with `⌘J` shortcut to inject.
+
 ## [1.0.0] — 2026-04
 
 First public release.

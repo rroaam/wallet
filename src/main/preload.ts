@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld("wallet", {
   quitApp: (): Promise<void> => ipcRenderer.invoke("quit-app"),
   setContextActive: (active: boolean): Promise<boolean> =>
     ipcRenderer.invoke("set-context-active", active),
+  getBridgeInfo: (): Promise<
+    { port: number; token: string; url: string } | null
+  > => ipcRenderer.invoke("get-bridge-info"),
 
   // Event listeners
   onInjection: (cb: (data: InjectionEvent) => void) => {

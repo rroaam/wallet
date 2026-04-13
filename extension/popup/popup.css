@@ -1,0 +1,239 @@
+:root {
+  --bg: #0a0a0b;
+  --fg: #ededef;
+  --muted: #8e8e93;
+  --card: #141416;
+  --border: #2c2c2e;
+  --accent: #ff6b35;
+  --success: #30d158;
+  --error: #ff453a;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  width: 320px;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--fg);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.wordmark {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.status .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.status[data-state="online"] .dot {
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(48, 209, 88, 0.5);
+}
+.status[data-state="online"] .label {
+  color: var(--success);
+}
+.status[data-state="offline"] .dot {
+  background: var(--error);
+}
+.status[data-state="offline"] .label {
+  color: var(--error);
+}
+
+main {
+  padding: 14px 16px 16px;
+}
+
+.intro {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 12px;
+}
+
+.pair-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+input[type="password"],
+input[type="text"] {
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+input[type="password"]:focus,
+input[type="text"]:focus {
+  border-color: var(--accent);
+}
+
+button.primary {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+button.primary:hover {
+  opacity: 0.9;
+}
+
+button.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.ghost {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+button.ghost:hover {
+  border-color: var(--fg);
+}
+
+.error {
+  color: var(--error);
+  font-size: 11px;
+  margin: 4px 0 0;
+}
+
+.paired-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paired-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paired-label {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hint {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.hint kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--fg);
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  margin: 0 2px;
+}
+
+.footnote {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.footnote a {
+  color: var(--muted);
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+.footnote a:hover {
+  color: var(--fg);
+}

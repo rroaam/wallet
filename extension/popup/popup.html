@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wallet</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="logo">W</div>
+        <div class="wordmark">Wallet</div>
+      </div>
+      <div id="status" class="status" data-state="loading">
+        <span class="dot"></span>
+        <span class="label">Checking…</span>
+      </div>
+    </header>
+
+    <main>
+      <p class="intro">
+        The Wallet extension pairs with the Wallet macOS app over a local,
+        token-protected bridge. Copy your pairing token from Wallet → Settings →
+        Browser Extension.
+      </p>
+
+      <div id="pair-form" class="pair-form">
+        <label for="token-input" class="label">Pairing token</label>
+        <input
+          type="password"
+          id="token-input"
+          placeholder="64-character hex"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="pair-btn" class="primary">Pair device</button>
+        <p id="pair-error" class="error" hidden></p>
+      </div>
+
+      <div id="paired-view" class="paired-view" hidden>
+        <div class="paired-row">
+          <span class="paired-label">Paired to localhost:9847</span>
+          <button id="unpair-btn" class="ghost">Unpair</button>
+        </div>
+        <div class="hint">
+          <kbd>⌘</kbd><kbd>J</kbd> on Claude, ChatGPT, Gemini, Perplexity, or
+          Copilot to inject your context.
+        </div>
+      </div>
+
+      <div class="footnote">
+        <a href="https://github.com/rroaam/wallet" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+        ·
+        <a href="https://wallet-site-nine.vercel.app" target="_blank" rel="noreferrer">
+          Landing
+        </a>
+      </div>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,10 +1,41 @@
+import { useEffect, useState } from "react";
+
 interface SettingsProps {
   onBack: () => void;
   contextActive: boolean;
   onToggleContext: () => void;
 }
 
+type BridgeInfo = { port: number; token: string; url: string } | null;
+
 export function Settings({ onBack, contextActive, onToggleContext }: SettingsProps) {
+  const [bridge, setBridge] = useState<BridgeInfo>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    window.wallet.getBridgeInfo().then((info) => {
+      if (!cancelled) setBridge(info);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function copyToken() {
+    if (!bridge) return;
+    try {
+      await navigator.clipboard.writeText(bridge.token);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  }
+
+  const maskedToken = bridge
+    ? `${bridge.token.slice(0, 4)}${"•".repeat(24)}${bridge.token.slice(-4)}`
+    : "";
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -62,6 +93,51 @@ export function Settings({ onBack, contextActive, onToggleContext }: SettingsPro
               }}
             />
           </button>
+        </div>
+
+        {/* Section label */}
+        <span className="mono text-[9px] text-wallet-muted/60 uppercase tracking-[0.15em] px-1 mt-2">
+          Browser Extension
+        </span>
+
+        {/* Bridge status + token — glass card */}
+        <div className="glass rounded-xl px-3.5 py-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[13px] text-wallet-white">Local bridge</span>
+            <span
+              className="mono text-[10px] uppercase tracking-[0.14em]"
+              style={{ color: bridge ? "var(--color-wallet-green)" : "var(--color-wallet-muted)" }}
+            >
+              {bridge ? `● 127.0.0.1:${bridge.port}` : "○ off"}
+            </span>
+          </div>
+          <p className="text-[11px] text-wallet-muted leading-relaxed">
+            The Wallet browser extension pairs with this device using a one-time token. The bridge
+            only accepts requests from your own machine.
+          </p>
+
+          {bridge && (
+            <div className="mt-1 flex items-center gap-2">
+              <code
+                className="mono text-[10px] flex-1 min-w-0 truncate px-2 py-1.5 rounded-md bg-black/20 text-wallet-white select-all"
+                title="Pairing token"
+              >
+                {revealed ? bridge.token : maskedToken}
+              </code>
+              <button
+                onClick={() => setRevealed((v) => !v)}
+                className="text-[10px] mono uppercase tracking-[0.1em] text-wallet-muted hover:text-wallet-white transition-colors"
+              >
+                {revealed ? "hide" : "show"}
+              </button>
+              <button
+                onClick={copyToken}
+                className="text-[10px] mono uppercase tracking-[0.1em] text-wallet-white hover:opacity-80 transition-opacity"
+              >
+                {copied ? "copied" : "copy"}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Section label */}

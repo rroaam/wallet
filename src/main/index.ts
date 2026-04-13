@@ -7,6 +7,7 @@ import { formatCards } from "./injection";
 import { WalletCard, CardID, DetectedApp } from "./types";
 import { CARD_META, APP_CARD_MAP } from "./constants";
 import { syncCardsForMCP } from "./mcp-bridge";
+import { startBridge, stopBridge, type BridgeInfo } from "./bridge";
 
 // Type re-exports for main process (CommonJS)
 export type { WalletCard, CardID, DetectedApp };
@@ -15,6 +16,7 @@ export type { WalletCard, CardID, DetectedApp };
 interface StoreSchema {
   cards: WalletCard[];
   onboardingComplete: boolean;
+  bridgeToken?: string;
 }
 
 const store = new Store<StoreSchema>({
@@ -26,6 +28,8 @@ const store = new Store<StoreSchema>({
   get<K extends keyof StoreSchema>(key: K): StoreSchema[K];
   set<K extends keyof StoreSchema>(key: K, value: StoreSchema[K]): void;
 };
+
+let bridgeInfo: BridgeInfo | null = null;
 
 function createDefaultCards(): WalletCard[] {
   const now = new Date().toISOString();
@@ -41,8 +45,10 @@ function createDefaultCards(): WalletCard[] {
   }));
 }
 
-// Determine renderer URL
-const isDev = process.env.NODE_ENV !== "production";
+// Determine renderer URL. `app.isPackaged` is the canonical Electron way —
+// NODE_ENV is unset in packaged builds, which caused v1.0.0 to try loading
+// the Vite dev server and ship a blank window.
+const isDev = !app.isPackaged;
 const rendererURL = isDev
   ? "http://localhost:5173"
   : `file://${path.join(__dirname, "../renderer/index.html")}`;
@@ -186,6 +192,34 @@ app.whenReady().then(() => {
   // Sync cards for MCP on startup
   syncCardsForMCP(store.get("cards"));
 
+  // Start the local HTTP bridge for the browser extension
+  bridgeInfo = startBridge({
+    store: store as Parameters<typeof startBridge>[0]["store"],
+    onCardUpdate: (card) => {
+      const cards = store.get("cards");
+      syncCardsForMCP(cards);
+      win?.webContents.send("cards-updated", cards);
+    },
+    onInjection: ({ cardIds, app: detectedApp }) => {
+      const now = new Date().toISOString();
+      win?.webContents.send("injection", {
+        cardIds,
+        app: detectedApp,
+        timestamp: now,
+      });
+      setTimeout(() => {
+        const current = store.get("cards");
+        store.set(
+          "cards",
+          current.map((c) =>
+            cardIds.includes(c.id) ? { ...c, isActive: false } : c,
+          ),
+        );
+        win?.webContents.send("cards-updated", store.get("cards"));
+      }, 3000);
+    },
+  });
+
   // Auto-updates (checks GitHub Releases, downloads + installs on quit)
   if (!isDev) {
     autoUpdater.logger = console;
@@ -207,6 +241,7 @@ app.on("window-all-closed", () => {
 
 app.on("will-quit", () => {
   globalShortcut.unregisterAll();
+  stopBridge();
 });
 
 // ── IPC handlers ──────────────────────────────────────────────────────
@@ -274,6 +309,15 @@ ipcMain.handle("set-onboarding-complete", () => {
 
 ipcMain.handle("quit-app", () => {
   app.quit();
+});
+
+ipcMain.handle("get-bridge-info", () => {
+  if (!bridgeInfo) return null;
+  return {
+    port: bridgeInfo.port,
+    token: bridgeInfo.token,
+    url: bridgeInfo.url,
+  };
 });
 
 ipcMain.handle("set-context-active", (_e, active: boolean) => {
