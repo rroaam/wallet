@@ -2,6 +2,16 @@
 
 All notable changes to Wallet will be documented in this file.
 
+## [1.0.3] — 2026-04
+
+### Changed — Onboarding polish
+- Onboarding is now built on the Control Center material system: a top chrome bar with an animated step indicator (•••), content cards using cc-shell/cc-icon, and a fixed bottom CTA bar.
+- Welcome screen uses a premium 72×72 gradient icon with inset highlights and a soft blue glow shadow, 24px/−0.02em tracking title.
+- Identity input now sits inside a cc-shell container (not a bordered glass-input), with the Control Center colored icon chip next to the title.
+- Completion screen uses a glowing 72px green success circle with stroke-animated checkmark, card name chips styled as subtle pills.
+- Buttons replaced the old purple/cyan gradient pill with an Apple-style solid white-on-dark primary CTA (44px, 12px radius, active:scale 0.98), Skip as a subtle ghost button.
+- Removed leftover gradient-text / gradient-btn usage from Onboarding.
+
 ## [1.0.2] — 2026-04
 
 ### Changed — Control Center UI refresh

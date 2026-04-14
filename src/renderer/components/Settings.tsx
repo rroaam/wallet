@@ -147,7 +147,7 @@ export function Settings({ onBack, contextActive, onToggleContext }: SettingsPro
         <div className="cc-shell px-3.5 py-3">
           <span className="text-[13px] text-wallet-white">About</span>
           <p className="text-[11px] text-wallet-muted mt-0.5">
-            Wallet v1.0.2 — Personal AI context layer
+            Wallet v1.0.3 — Personal AI context layer
           </p>
         </div>
 
